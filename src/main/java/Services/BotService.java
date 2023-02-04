@@ -45,8 +45,8 @@ public class BotService {
                             .comparing(item -> getDistanceBetween(bot, item)))
                     .collect(Collectors.toList());
 
-            var enemyList = gameState.getGameObjects()
-                    .stream().filter(item -> item.getGameObjectType() == ObjectTypes.PLAYER && item.getSize() * 3 < 2 *bot.getSize())
+            var enemyList = gameState.getPlayerGameObjects()
+                    .stream().filter(item -> (item.getGameObjectType() == ObjectTypes.PLAYER && item.getSize() + 5 < bot.getSize()))
                     .sorted(Comparator
                             .comparing(item -> getDistanceBetween(bot, item)))
                     .collect(Collectors.toList());
@@ -54,6 +54,7 @@ public class BotService {
             playerAction.heading = getHeadingBetween(foodList.get(0));
             if(!enemyList.isEmpty()) {
                 playerAction.heading = getHeadingBetween(enemyList.get(0));
+                System.out.println(enemyList.get(0).getSize());
             }
         }
 
