@@ -2,15 +2,12 @@ import Enums.*;
 import Models.*;
 import Services.*;
 import com.microsoft.signalr.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        Logger logger = LoggerFactory.getLogger(Main.class);
         BotService botService = new BotService();
         String token = System.getenv("Token");
         token = (token != null) ? token : UUID.randomUUID().toString();
@@ -58,7 +55,7 @@ public class Main {
 
         Thread.sleep(1000);
         System.out.println("Registering with the runner...");
-        hubConnection.send("Register", token, "BotOne");
+        hubConnection.send("Register", token, "BRIANKHENG");
 
         //This is a blocking call
         hubConnection.start().subscribe(() -> {
