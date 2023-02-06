@@ -11,10 +11,13 @@ public class BotService {
     private GameObject bot;
     private PlayerAction playerAction;
     private GameState gameState;
+    private int tickLeft;
+    private int outputTeleport;
 
     public BotService() {
         this.playerAction = new PlayerAction();
         this.gameState = new GameState();
+        this.outputTeleport = 0;
     }
 
 
@@ -38,22 +41,35 @@ public class BotService {
         playerAction.action = PlayerActions.FORWARD;
         playerAction.heading = new Random().nextInt(360);
 
-        if (!gameState.getGameObjects().isEmpty()) {
-            var foodList = gameState.getGameObjects()
-                    .stream().filter(item -> item.getGameObjectType() == ObjectTypes.FOOD)
+        if(tickLeft == 0 && outputTeleport != 0){
+            playerAction.action = PlayerActions.TELEPORT;
+            outputTeleport--;
+        }
+        else{
+            if(tickLeft > 0) tickLeft--;
+            var enemyList = gameState.getPlayerGameObjects()
+                    .stream().filter(item -> item.getGameObjectType() == ObjectTypes.PLAYER && item.getSize() + 3 < bot.getSize())
                     .sorted(Comparator
                             .comparing(item -> getDistanceBetween(bot, item)))
                     .collect(Collectors.toList());
-
-            var enemyList = gameState.getGameObjects()
-                    .stream().filter(item -> item.getGameObjectType() == ObjectTypes.PLAYER && item.getSize() * 3 < 2 *bot.getSize())
-                    .sorted(Comparator
-                            .comparing(item -> getDistanceBetween(bot, item)))
-                    .collect(Collectors.toList());
-
-            playerAction.heading = getHeadingBetween(foodList.get(0));
-            if(!enemyList.isEmpty()) {
+            if(bot.getSize() >= 40 && !enemyList.isEmpty() && outputTeleport == 0){
+                playerAction.action = PlayerActions.FIRETELEPORT;
+                outputTeleport = 5;
+                tickLeft = (int) getDistanceBetween(bot, enemyList.get(0)) / 10 + 3;
                 playerAction.heading = getHeadingBetween(enemyList.get(0));
+            }
+
+            else if (!gameState.getGameObjects().isEmpty()) {
+                var foodList = gameState.getGameObjects()
+                        .stream().filter(item -> item.getGameObjectType() == ObjectTypes.FOOD)
+                        .sorted(Comparator
+                                .comparing(item -> getDistanceBetween(bot, item)))
+                        .collect(Collectors.toList());
+
+                playerAction.heading = getHeadingBetween(foodList.get(0));
+                if(!enemyList.isEmpty() && getDistanceBetween(bot, enemyList.get(0)) < 30) {
+                    playerAction.heading = getHeadingBetween(enemyList.get(0));
+                }
             }
         }
 
