@@ -46,7 +46,10 @@ public class BotService {
                 currentTick >= gameState.getWorld().getCurrentTick())
             return;
         tickOutput();
-        currentTick = gameState.getWorld().getCurrentTick();
+        if (gameState.getWorld().getCurrentTick() != null) {
+            currentTick = gameState.getWorld().getCurrentTick();
+        }
+
 
         // Time start
         Timestamp start_time = new Timestamp(System.currentTimeMillis());
@@ -61,7 +64,10 @@ public class BotService {
         System.out.println(", Time needed: " + (double)(end_time.getNanos() - start_time.getNanos()) / 1000000.0 + " ms");
 
         this.playerAction = valuesList.bestAction();
+        playerAction = this.playerAction;
         System.out.println("Size : " + bot.getSize());
+        System.out.println("Pos : " + bot.getPosition().getX() + " " + bot.getPosition().getY());
+        System.out.println("");
     }
 
     public GameState getGameState() {

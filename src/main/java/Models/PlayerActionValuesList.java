@@ -70,11 +70,13 @@ public class PlayerActionValuesList{
             playerAction.immediateValue = 0.0;
             playerAction.heuristicValue = 0.0;
 
-            var pos = bot.getPosition();
+            var pos = new Position(bot.getPosition().getX(), bot.getPosition().getY());
             switch (playerAction.getAction()) {
                 case FORWARD:
-                    pos.setX(pos.getX() + (int) (bot.getSpeed() * Math.cos(playerAction.getHeading())));
-                    pos.setY(pos.getY() + (int) (bot.getSpeed() * Math.sin(playerAction.getHeading())));
+                    pos.setX(Math.round(pos.getX() + Math.round((double) bot.getSpeed() *
+                            Math.cos(Math.toRadians(playerAction.getHeading())))));
+                    pos.setY(Math.round(pos.getY() + Math.round((double) bot.getSpeed() *
+                            Math.sin(Math.toRadians(playerAction.getHeading())))));
                     break;
                 case STOP:
                     break;
@@ -104,6 +106,9 @@ public class PlayerActionValuesList{
                 case USESHIELD:
                     playerAction.setToDead();
                     break;
+                default:
+                    playerAction.setToDead();
+                    break;
             }
 
             playerAction.computePositionImmediateGain(pos, gameState, bot,
@@ -129,6 +134,12 @@ public class PlayerActionValuesList{
     public static double getDistanceBetween(GameObject object1, GameObject object2) {
         var triangleX = Math.abs(object1.getPosition().x - object2.getPosition().x);
         var triangleY = Math.abs(object1.getPosition().y - object2.getPosition().y);
+        return Math.sqrt(triangleX * triangleX + triangleY * triangleY);
+    }
+
+    public static double getDistanceBetween(Position pos1, Position pos2) {
+        var triangleX = Math.abs(pos1.x - pos2.x);
+        var triangleY = Math.abs(pos1.y - pos2.y);
         return Math.sqrt(triangleX * triangleX + triangleY * triangleY);
     }
 

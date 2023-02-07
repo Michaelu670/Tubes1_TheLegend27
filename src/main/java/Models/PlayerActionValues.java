@@ -46,30 +46,37 @@ public class PlayerActionValues extends PlayerAction{
                                               List<GameObject> superfoodList,
                                               List<GameObject> poisongasList,
                                               List<GameObject> torpedoList) {
-        double gain = 0.0;
+        GameObject TempBot = new GameObject(bot.getId(),
+                bot.getSize(),
+                bot.getSpeed(),
+                bot.currentHeading,
+                pos,
+                bot.getGameObjectType());
+
         // Check other player
         for (var player : otherPlayerList) {
-            if(!PlayerActionValuesList.isCollide(bot, player)) continue;
-            if (player.getSize() >= 2 * bot.getSize()) {
+            if (PlayerActionValuesList.getDistanceBetween(player, TempBot) >
+                player.getSize() + TempBot.getSize() + player.getSpeed()) continue;
+            if (player.getSize() >= 2 * TempBot.getSize()) {
                 setToDead();
                 return;
-            } else if (player.getSize() > bot.getSize()) {
+            } else if (player.getSize() > TempBot.getSize()) {
                 addImmediateValue(-player.getSize() / 2);
             }
             else {
-                addImmediateValue(Math.min(bot.getSize() / 2, player.getSize()));
+                addImmediateValue(Math.min(TempBot.getSize() / 2, player.getSize()));
             }
         }
         // Check food
         for (var obj : foodList) {
-            if(!PlayerActionValuesList.isCollide(bot, obj)) continue;
+            if(!PlayerActionValuesList.isCollide(TempBot, obj)) continue;
             addImmediateValue(obj.getSize());
             // TODO If superfood, addImmediateValue 2 * obj
 
         }
         // Check superfood
         for (var obj : superfoodList) {
-            if(!PlayerActionValuesList.isCollide(bot, obj)) continue;
+            if(!PlayerActionValuesList.isCollide(TempBot, obj)) continue;
             addImmediateValue(obj.getSize());
             // If not superfood, add superfood effects
             addImmediateValue(SUPERFOOD_CONSTANT);
@@ -77,7 +84,7 @@ public class PlayerActionValues extends PlayerAction{
 
         // Check gas
         for (var obj : poisongasList) {
-            if(!PlayerActionValuesList.isCollide(bot, obj)) continue;
+            if(!PlayerActionValuesList.isCollide(TempBot, obj)) continue;
             addImmediateValue(-1);
             // TODO add heuristic value of radius - distance (not here)
         }
@@ -89,9 +96,25 @@ public class PlayerActionValues extends PlayerAction{
                                               List<GameObject> foodList,
                                               List<GameObject> superfoodList,
                                               List<GameObject> poisongasList) {
+        addHeuristicValue(1000 / Math.pow(PlayerActionValuesList.getDistanceBetween(
+                bot.getPosition(), gameState.getWorld().getCenterPoint()), 3));
+
+        for (var player : otherPlayerList) {
+            if (player.getSize() > bot.getSize()) {
+                addHeuristicValue(-1000 * Math.min(bot.getSize(), player.getSize() / 2)/
+                        (Math.pow(PlayerActionValuesList.getDistanceBetween(pos, player.getPosition())
+                                - player.getSize() - bot.getSize(),3) + 1.0));
+            }
+            else {
+                addHeuristicValue(400 * Math.min(bot.getSize() / 2, player.getSize())/
+                        (Math.pow(PlayerActionValuesList.getDistanceBetween(pos, player.getPosition())
+                                - player.getSize() - bot.getSize(),3) + 1.0));
+            }
+        }
         for (var obj : foodList) {
-            addHeuristicValue(100 * obj.getSize() /
-                    (Math.pow(PlayerActionValuesList.getDistanceBetween(bot, obj),2) + 1.0));
+            addHeuristicValue(400 * obj.getSize() /
+                    (Math.pow(PlayerActionValuesList.getDistanceBetween(
+                            pos, obj.getPosition()),3) + 1.0));
         }
     }
 
@@ -99,7 +122,8 @@ public class PlayerActionValues extends PlayerAction{
         String ret = new String();
         ret += "Move : " + getAction() + "\n";
         ret += "Heading : " + getHeading() + "\n";
-        ret += "Value : " + getValue();
+        ret += "Value : " + getValue() + "\n";
+        ret += "Imm Value : " + immediateValue + " | Heu Value : " + heuristicValue;
         return ret;
     }
 
