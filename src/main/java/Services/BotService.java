@@ -16,11 +16,13 @@ public class BotService {
     private PlayerAction playerAction;
     private GameState gameState;
     private Integer currentTick;
+    private Integer prevRadius;
 
     public BotService() {
         this.playerAction = new PlayerAction();
         this.gameState = new GameState();
         currentTick = -1;
+        prevRadius = -1;
     }
 
 
@@ -50,6 +52,10 @@ public class BotService {
             currentTick = gameState.getWorld().getCurrentTick();
         }
 
+        // Update delta
+        if (prevRadius != -1)
+            gameState.getWorld().setDeltaRadius(prevRadius - gameState.getWorld().getRadius());
+
 
         // Time start
         Timestamp start_time = new Timestamp(System.currentTimeMillis());
@@ -67,6 +73,7 @@ public class BotService {
         playerAction = this.playerAction;
         System.out.println("Size : " + bot.getSize());
         System.out.println("Pos : " + bot.getPosition().getX() + " " + bot.getPosition().getY());
+        System.out.println("Effects : " + bot.getEffects().toString());
         System.out.println("");
     }
 

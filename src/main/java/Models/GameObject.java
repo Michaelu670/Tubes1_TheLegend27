@@ -10,14 +10,26 @@ public class GameObject {
   public Integer currentHeading;
   public Position position;
   public ObjectTypes gameObjectType;
+  public EnumSet<Effects> effects;
 
-  public GameObject(UUID id, Integer size, Integer speed, Integer currentHeading, Position position, ObjectTypes gameObjectType) {
+
+  public EnumSet<Effects> getEffects() {
+    return effects;
+  }
+
+  public void setEffects(EnumSet<Effects> effects) {
+    this.effects = effects;
+  }
+
+
+  public GameObject(UUID id, Integer size, Integer speed, Integer currentHeading, Position position, ObjectTypes gameObjectType, EnumSet<Effects> effects) {
     this.id = id;
     this.size = size;
     this.speed = speed;
     this.currentHeading = currentHeading;
     this.position = position;
     this.gameObjectType = gameObjectType;
+    this.effects = effects;
   }
 
   public UUID getId() {
@@ -63,6 +75,6 @@ public class GameObject {
   public static GameObject FromStateList(UUID id, List<Integer> stateList)
   {
     Position position = new Position(stateList.get(4), stateList.get(5));
-    return new GameObject(id, stateList.get(0), stateList.get(1), stateList.get(2), position, ObjectTypes.valueOf(stateList.get(3)));
+    return new GameObject(id, stateList.get(0), stateList.get(1), stateList.get(2), position, ObjectTypes.valueOf(stateList.get(3)), Effects.getEffects(stateList.get(6)));
   }
 }

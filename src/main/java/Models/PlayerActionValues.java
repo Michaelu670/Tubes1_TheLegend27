@@ -1,5 +1,6 @@
 package Models;
 
+import Enums.Effects;
 import Enums.PlayerActions;
 
 import java.util.Comparator;
@@ -25,7 +26,7 @@ public class PlayerActionValues extends PlayerAction{
     }
 
     public double getValue() {
-        if(isDead()) return 0.0;
+        if(isDead()) return -Double.MAX_VALUE;
         return (immediateValue * immediateValueRate) +
                 (heuristicValue * heuristicValueRate);
     }
@@ -51,7 +52,8 @@ public class PlayerActionValues extends PlayerAction{
                 bot.getSpeed(),
                 bot.currentHeading,
                 pos,
-                bot.getGameObjectType());
+                bot.getGameObjectType(),
+                bot.getEffects());
 
         // Check other player
         for (var player : otherPlayerList) {
@@ -71,23 +73,30 @@ public class PlayerActionValues extends PlayerAction{
         for (var obj : foodList) {
             if(!PlayerActionValuesList.isCollide(TempBot, obj)) continue;
             addImmediateValue(obj.getSize());
-            // TODO If superfood, addImmediateValue 2 * obj
-
+            if (bot.getEffects().contains(Effects.SUPERFOOD)) {
+                addImmediateValue(obj.getSize());
+            }
         }
         // Check superfood
         for (var obj : superfoodList) {
             if(!PlayerActionValuesList.isCollide(TempBot, obj)) continue;
             addImmediateValue(obj.getSize());
-            // If not superfood, add superfood effects
-            addImmediateValue(SUPERFOOD_CONSTANT);
         }
 
         // Check gas
+        boolean isGas = false;
         for (var obj : poisongasList) {
             if(!PlayerActionValuesList.isCollide(TempBot, obj)) continue;
-            addImmediateValue(-1);
-            // TODO add heuristic value of radius - distance (not here)
+            isGas = true;
         }
+
+        // Check outer gas
+        if (PlayerActionValuesList.getDistanceBetween(pos, gameState.getWorld().getCenterPoint())
+                > gameState.getWorld().getRadius() - bot.getSize() - gameState.getWorld().getDeltaRadius() - 1) {
+            isGas = true;
+        }
+
+        if (isGas) addImmediateValue(-1);
 
     }
 
@@ -96,12 +105,20 @@ public class PlayerActionValues extends PlayerAction{
                                               List<GameObject> foodList,
                                               List<GameObject> superfoodList,
                                               List<GameObject> poisongasList) {
-        addHeuristicValue(1000 / Math.pow(PlayerActionValuesList.getDistanceBetween(
-                bot.getPosition(), gameState.getWorld().getCenterPoint()), 3));
+        GameObject TempBot = new GameObject(bot.getId(),
+                bot.getSize(),
+                bot.getSpeed(),
+                bot.currentHeading,
+                pos,
+                bot.getGameObjectType(),
+                bot.getEffects());
+
+        addHeuristicValue(1000 / (Math.pow(PlayerActionValuesList.getDistanceBetween(
+                TempBot.getPosition(), gameState.getWorld().getCenterPoint()), 3) + 1.0));
 
         for (var player : otherPlayerList) {
             if (player.getSize() > bot.getSize()) {
-                addHeuristicValue(-1000 * Math.min(bot.getSize(), player.getSize() / 2)/
+                addHeuristicValue(-700 * Math.min(bot.getSize(), player.getSize() / 2)/
                         (Math.pow(PlayerActionValuesList.getDistanceBetween(pos, player.getPosition())
                                 - player.getSize() - bot.getSize(),3) + 1.0));
             }
@@ -112,10 +129,30 @@ public class PlayerActionValues extends PlayerAction{
             }
         }
         for (var obj : foodList) {
-            addHeuristicValue(400 * obj.getSize() /
+            addHeuristicValue(150 * obj.getSize() /
                     (Math.pow(PlayerActionValuesList.getDistanceBetween(
                             pos, obj.getPosition()),3) + 1.0));
         }
+
+        for (var obj : superfoodList) {
+            addHeuristicValue(400 * obj.getSize() /
+                    (Math.pow(PlayerActionValuesList.getDistanceBetween(
+                            pos, obj.getPosition()),3) + 1.0));
+            if (PlayerActionValuesList.isCollide(TempBot, obj)) {
+                addHeuristicValue(SUPERFOOD_CONSTANT);
+            }
+        }
+
+        for (var obj : poisongasList) {
+            if (PlayerActionValuesList.isCollide(TempBot, obj)) {
+                addHeuristicValue(-TempBot.getSize() - obj.getSize()
+                        + PlayerActionValuesList.getDistanceBetween(TempBot, obj));
+            }
+        }
+
+        addHeuristicValue(Math.min(
+                -PlayerActionValuesList.getDistanceBetween(pos, gameState.getWorld().getCenterPoint())
+                - TempBot.getSize() + gameState.getWorld().getRadius(), 0));
     }
 
     public String toString() {

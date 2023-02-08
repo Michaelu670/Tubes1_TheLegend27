@@ -31,11 +31,11 @@ public class PlayerActionValuesList{
 
     public PlayerActionValuesList(PlayerAction playerAction, GameState gameState, GameObject bot) {
         values = new ArrayList<>();
-        fill(playerAction);
+        fill(playerAction, gameState, bot);
         compute(gameState, bot);
     }
 
-    private void fill(PlayerAction playerAction) {
+    private void fill(PlayerAction playerAction, GameState gameState, GameObject bot) {
 
         for (var currentPlayerAction : actionsWithDirection) {
             for (int heading = 0; heading < 360; heading++) {
@@ -45,6 +45,14 @@ public class PlayerActionValuesList{
         for (var currentPlayerAction : actionsWithoutDirection) {
             values.add(new PlayerActionValues(playerAction, currentPlayerAction, 0));
         }
+        var otherPlayerList = gameState.getPlayerGameObjects()
+                .stream().filter(item -> item.getId() != bot.getId())
+                .sorted(Comparator.comparing(item -> item.getSize()))
+                .collect(Collectors.toList());
+        for (var player : otherPlayerList) {
+
+        }
+
     }
 
     private void compute(GameState gameState, GameObject bot) {
@@ -128,7 +136,7 @@ public class PlayerActionValuesList{
     }
 
     public static boolean isCollide(GameObject object1, GameObject object2) {
-        return getDistanceBetween(object1, object2) < object1.getSize() + object2.getSize();
+        return getDistanceBetween(object1, object2) < (double) object1.getSize() + (double) object2.getSize();
     }
 
     public static double getDistanceBetween(GameObject object1, GameObject object2) {
