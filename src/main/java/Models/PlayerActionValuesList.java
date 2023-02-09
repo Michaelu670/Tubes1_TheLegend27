@@ -13,7 +13,7 @@ public class PlayerActionValuesList{
             PlayerActions.FORWARD,
             // PlayerActions.FIRE_SUPERNOVA, /* Direction dihitung,
             // PlayerActions.FIRE_TORPEDOES,    bukan dicari 0-359 */
-            PlayerActions.FIRETELEPORTER
+            // PlayerActions.FIRETELEPORTER
     };
     private static final PlayerActions[] actionsWithoutDirection = {
             PlayerActions.STOP,
@@ -67,10 +67,10 @@ public class PlayerActionValuesList{
                 .stream().filter(item -> item.getGameObjectType() == ObjectTypes.SUPERFOOD)
                 .collect(Collectors.toList());
         var poisongasList = gameState.getGameObjects()
-                .stream().filter(item -> item.getGameObjectType() == ObjectTypes.GAS_CLOUD)
+                .stream().filter(item -> item.getGameObjectType() == ObjectTypes.GASCLOUD)
                 .collect(Collectors.toList());
         var torpedoList = gameState.getGameObjects()
-                .stream().filter(item -> item.getGameObjectType() == ObjectTypes.TORPEDO_SALVO)
+                .stream().filter(item -> item.getGameObjectType() == ObjectTypes.TORPEDOSALVO)
                 .collect(Collectors.toList());
 
 
