@@ -75,6 +75,7 @@ public class BotService {
         System.out.println("Pos : " + bot.getPosition().getX() + " " + bot.getPosition().getY());
         System.out.println("Effects : " + bot.getEffects().toString());
         System.out.println("Salvo count : " + bot.getTorpedoSalvoCount());
+        System.out.println("Teleporter count: " + bot.getTeleporterCount());
         System.out.println("");
     }
 
