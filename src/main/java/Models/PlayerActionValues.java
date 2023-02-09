@@ -16,6 +16,7 @@ public class PlayerActionValues extends PlayerAction{
     private static final double immediateValueRate = 0.7;
     private static final double heuristicValueRate = 0.3;
     private static final double SUPERFOOD_CONSTANT = 3;
+    private static final double WORLD_EDGE_CONSTANT = 10;
 
 
     public PlayerActionValues(GameObject bot, PlayerAction playerAction, PlayerActions playerActions, int newHeading) {
@@ -171,7 +172,7 @@ public class PlayerActionValues extends PlayerAction{
 
         addHeuristicValue(Math.min(
                 -PlayerActionValuesList.getDistanceBetween(pos, gameState.getWorld().getCenterPoint())
-                - TempBot.getSize() + gameState.getWorld().getRadius(), 0));
+                - TempBot.getSize() + gameState.getWorld().getRadius() - WORLD_EDGE_CONSTANT, 0));
     }
 
     public void addTorpedoValue(GameObject bot) {

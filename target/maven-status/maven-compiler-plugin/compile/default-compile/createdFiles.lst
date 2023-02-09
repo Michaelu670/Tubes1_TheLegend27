@@ -1,5 +1,11 @@
 Enums\Effects.class
 Enums\ObjectTypes.class
 Models\PlayerAction.class
+Models\GameObject.class
+Main.class
+Enums\PlayerActions.class
 Models\GameState.class
+Services\BotService.class
 Models\GameStateDto.class
+Models\Position.class
+Models\World.class
