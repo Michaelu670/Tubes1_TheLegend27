@@ -21,7 +21,7 @@ public class PlayerActionValuesList{
             PlayerActions.STOPAFTERBURNER,
             PlayerActions.DETONATESUPERNOVA,
             PlayerActions.TELEPORT,
-            PlayerActions.USESHIELD
+            PlayerActions.ACTIVATESHIELD
     };
 
     public PlayerActionValuesList() {
@@ -96,7 +96,7 @@ public class PlayerActionValuesList{
                     playerAction.setToDead();
                     break;
                 case FIRETORPEDOES:
-                    playerAction.addTorpedoValue(bot);
+                    playerAction.addTorpedoValue(bot, gameState);
                     break;
                 case FIRESUPERNOVA:
                     playerAction.setToDead();
@@ -110,8 +110,8 @@ public class PlayerActionValuesList{
                 case TELEPORT:
                     playerAction.setToDead();
                     break;
-                case USESHIELD:
-                    playerAction.setToDead();
+                case ACTIVATESHIELD:
+                    playerAction.addShieldValue(bot, torpedoList);
                     break;
                 default:
                     playerAction.setToDead();

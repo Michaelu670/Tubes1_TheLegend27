@@ -17,7 +17,6 @@ public class PlayerActionValues extends PlayerAction{
     private static final double heuristicValueRate = 0.3;
     private static final double SUPERFOOD_CONSTANT = 3;
 
-
     public PlayerActionValues(GameObject bot, PlayerAction playerAction, PlayerActions playerActions, int newHeading) {
         immediateValue = 0;
         heuristicValue = 0;
@@ -174,13 +173,36 @@ public class PlayerActionValues extends PlayerAction{
                 - TempBot.getSize() + gameState.getWorld().getRadius(), 0));
     }
 
-    public void addTorpedoValue(GameObject bot) {
-        if(bot.getSize() <= 10) setToDead();
-        addHeuristicValue(target.getSize() /
-                Math.pow(PlayerActionValuesList.getDistanceBetween(target, bot), 0.4)
-                * Math.pow(bot.getTorpedoSalvoCount(), 3) / 125);
+    public void addTorpedoValue(GameObject bot, GameState gameState) {
+        if(target.getEffects().contains(Effects.SHIELD) || bot.getSize() <= 25) {
+            setToDead();
+        }
+        else {
+            addHeuristicValue(target.getSize() /
+                    Math.pow((PlayerActionValuesList.getDistanceBetween(target, bot) * bot.getSize()/target.getSize()), 1.5)  // TODO Bot distance
+                    * Math.pow((bot.getTorpedoSalvoCount()), 3) * gameState.getWorld().getCurrentTick() / 62500);
+        }
     }
 
+    public void addShieldValue(GameObject bot, List <GameObject> torpedoList) {
+        if(bot.getSize() <= 50 || bot.getShieldCount() == 0 || bot.getEffects().contains(Effects.SHIELD)) {
+            setToDead();
+        }
+        else {
+            double val = 0;
+            for (var torpedo : torpedoList) {
+                double distance = PlayerActionValuesList.getDistanceBetween(bot, torpedo);
+                double relativeHeading = Math.abs(distance - torpedo.currentHeading);
+                Double deviance = Math.toDegrees(Math.asin((bot.size + torpedo.size) / PlayerActionValuesList.getDistanceBetween(bot, torpedo)));
+                if (relativeHeading < deviance && !deviance.isNaN()) {
+                    if (relativeHeading == 0) relativeHeading = 0.001;
+                    val += torpedo.size * (deviance / relativeHeading) / Math.pow(distance/60, 3);
+                }
+            }
+            val *= bot.size / 60;
+            addHeuristicValue(val);
+        }
+    }
     public String toString() {
         String ret = new String();
         ret += "Move : " + getAction() + "\n";
