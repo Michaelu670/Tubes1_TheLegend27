@@ -62,7 +62,10 @@ public class PlayerActionValues extends PlayerAction{
             if (player.getSize() >= 2 * TempBot.getSize()) {
                 setToDead();
                 return;
-            } else if (player.getSize() > TempBot.getSize()) {
+            }
+            if (PlayerActionValuesList.getDistanceBetween(player, TempBot) >
+                    player.getSize() + TempBot.getSize() - player.getSpeed() / 3) continue;
+            if (player.getSize() > TempBot.getSize()) {
                 addImmediateValue(-player.getSize() / 2);
             }
             else {

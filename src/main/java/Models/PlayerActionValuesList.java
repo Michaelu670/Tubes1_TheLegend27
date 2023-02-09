@@ -136,7 +136,7 @@ public class PlayerActionValuesList{
     }
 
     public static boolean isCollide(GameObject object1, GameObject object2) {
-        return getDistanceBetween(object1, object2) < (double) object1.getSize() + (double) object2.getSize();
+        return (int) Math.round(getDistanceBetween(object1, object2)) <= object1.getSize() + object2.getSize();
     }
 
     public static double getDistanceBetween(GameObject object1, GameObject object2) {
