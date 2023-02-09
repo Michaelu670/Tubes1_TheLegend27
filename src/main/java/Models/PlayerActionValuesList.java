@@ -52,7 +52,12 @@ public class PlayerActionValuesList{
             values.add(new PlayerActionValues(bot, playerAction, PlayerActions.FIRETORPEDOES, getHeadingBetween(bot, player)));
             values.get(values.size() - 1).setTarget(player);
         }
-
+        if(bot.getTeleporterCount() != 0 && bot.getSize() > 40){
+            for (var player : otherPlayerList) {
+                values.add(new PlayerActionValues(bot, playerAction, PlayerActions.FIRETELEPORT, getHeadingBetween(bot, player)));
+                values.get(values.size() - 1).setTarget(player);
+            }
+        }
     }
 
     private void compute(GameState gameState, GameObject bot) {
@@ -104,8 +109,9 @@ public class PlayerActionValuesList{
                 case DETONATESUPERNOVA:
                     playerAction.setToDead();
                     break;
-                case FIRETELEPORTER:
-                    playerAction.setToDead();
+                case FIRETELEPORT:
+                    pos.setX(playerAction.target.getPosition().getX());
+                    pos.setY(playerAction.target.getPosition().getY());
                     break;
                 case TELEPORT:
                     playerAction.setToDead();
