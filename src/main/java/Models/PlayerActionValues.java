@@ -180,28 +180,33 @@ public class PlayerActionValues extends PlayerAction{
         }
         else {
             addHeuristicValue(target.getSize() /
-                    Math.pow((PlayerActionValuesList.getDistanceBetween(target, bot) * bot.getSize()/target.getSize()), 1.5)  // TODO Bot distance
-                    * Math.pow((bot.getTorpedoSalvoCount()), 3) * gameState.getWorld().getCurrentTick() / 62500);
+                    Math.pow(PlayerActionValuesList.getDistanceBetween(target, bot), 2.5)  // TODO Bot distance
+                    * Math.pow((bot.getTorpedoSalvoCount()), 3) * (target.getSize()/bot.getSize()) * gameState.getWorld().getCurrentTick() / 62500);
         }
     }
 
     public void addShieldValue(GameObject bot, List <GameObject> torpedoList) {
-        if(bot.getSize() <= 50 || bot.getShieldCount() == 0 || bot.getEffects().contains(Effects.SHIELD)) {
+        if((bot.getSize() <= 50) || (bot.getShieldCount() == 0) || bot.getEffects().contains(Effects.SHIELD)) {
             setToDead();
         }
         else {
             double val = 0;
+            boolean flag = false; // flag incoming torpedo, true if torpedo inbound
             for (var torpedo : torpedoList) {
-                double distance = PlayerActionValuesList.getDistanceBetween(bot, torpedo);
-                double relativeHeading = Math.abs(distance - torpedo.currentHeading);
-                Double deviance = Math.toDegrees(Math.asin((bot.size + torpedo.size) / PlayerActionValuesList.getDistanceBetween(bot, torpedo)));
-                if (relativeHeading < deviance && !deviance.isNaN()) {
+                double distance = PlayerActionValuesList.getDistanceBetween(bot, torpedo) - bot.getSize();
+                double relativeHeading = Math.abs(PlayerActionValuesList.getHeadingBetween(torpedo, bot) - torpedo.currentHeading);
+                Double deviance = Math.toDegrees(Math.asin((bot.getSize() + torpedo.getSize()) / distance)); // use Double class to check for NaN
+                if (relativeHeading < deviance /*&& !deviance.isNaN()*/) { // check if torpedo is possible to collide
                     if (relativeHeading == 0) relativeHeading = 0.001;
-                    val += torpedo.size * (deviance / relativeHeading) / Math.pow(distance/60, 3);
+                    val += torpedo.getSize() * (deviance / relativeHeading) / Math.pow(distance/20, 4);
+                    flag = true;
                 }
             }
-            val *= bot.size / 60;
-            addHeuristicValue(val);
+            if(flag) {
+                val *= bot.size / 60;
+                addHeuristicValue(val);
+            }
+            else setToDead();
         }
     }
     public String toString() {
