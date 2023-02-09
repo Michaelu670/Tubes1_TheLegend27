@@ -52,7 +52,12 @@ public class PlayerActionValuesList{
             values.add(new PlayerActionValues(bot, playerAction, PlayerActions.FIRETORPEDOES, getHeadingBetween(bot, player)));
             values.get(values.size() - 1).setTarget(player);
         }
-
+        if(bot.getTeleporterCount() != 0 && bot.getSize() > 40){
+            for (var player : otherPlayerList) {
+                values.add(new PlayerActionValues(bot, playerAction, PlayerActions.FIRETELEPORT, getHeadingBetween(bot, player)));
+                values.get(values.size() - 1).setTarget(player);
+            }
+        }
     }
 
     private void compute(GameState gameState, GameObject bot) {
@@ -104,8 +109,9 @@ public class PlayerActionValuesList{
                 case DETONATESUPERNOVA:
                     playerAction.setToDead();
                     break;
-                case FIRETELEPORTER:
-                    playerAction.setToDead();
+                case FIRETELEPORT:
+                    pos.setX(playerAction.target.getPosition().getX());
+                    pos.setY(playerAction.target.getPosition().getY());
                     break;
                 case TELEPORT:
                     playerAction.setToDead();
@@ -135,7 +141,7 @@ public class PlayerActionValuesList{
     }
 
     public static boolean isCollide(GameObject object1, GameObject object2) {
-        return (int) Math.round(getDistanceBetween(object1, object2)) <= object1.getSize() + object2.getSize();
+        return (int) Math.round(getDistanceBetween(object1, object2)) < object1.getSize() + object2.getSize();
     }
 
     public static double getDistanceBetween(GameObject object1, GameObject object2) {
