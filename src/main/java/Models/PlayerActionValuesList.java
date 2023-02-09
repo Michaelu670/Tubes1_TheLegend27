@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 public class PlayerActionValuesList{
     private ArrayList<PlayerActionValues> values;
-    private static final double TORPEDO_MULTIPLIER = 2;
     private static final PlayerActions[] actionsWithDirection = {
             PlayerActions.FORWARD,
             // PlayerActions.FIRE_SUPERNOVA, /* Direction dihitung,
@@ -39,18 +38,19 @@ public class PlayerActionValuesList{
 
         for (var currentPlayerAction : actionsWithDirection) {
             for (int heading = 0; heading < 360; heading++) {
-                values.add(new PlayerActionValues(playerAction, currentPlayerAction, heading));
+                values.add(new PlayerActionValues(bot, playerAction, currentPlayerAction, heading));
             }
         }
         for (var currentPlayerAction : actionsWithoutDirection) {
-            values.add(new PlayerActionValues(playerAction, currentPlayerAction, 0));
+            values.add(new PlayerActionValues(bot, playerAction, currentPlayerAction, 0));
         }
         var otherPlayerList = gameState.getPlayerGameObjects()
                 .stream().filter(item -> item.getId() != bot.getId())
                 .sorted(Comparator.comparing(item -> item.getSize()))
                 .collect(Collectors.toList());
         for (var player : otherPlayerList) {
-
+            values.add(new PlayerActionValues(bot, playerAction, PlayerActions.FIRETORPEDOES, getHeadingBetween(bot, player)));
+            values.get(values.size() - 1).setTarget(player);
         }
 
     }
@@ -96,8 +96,7 @@ public class PlayerActionValuesList{
                     playerAction.setToDead();
                     break;
                 case FIRETORPEDOES:
-                    playerAction.addHeuristicValue(
-                            TORPEDO_MULTIPLIER * otherPlayerList.get(0).getSize());
+                    playerAction.addTorpedoValue(bot);
                     break;
                 case FIRESUPERNOVA:
                     playerAction.setToDead();

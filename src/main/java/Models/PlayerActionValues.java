@@ -12,15 +12,17 @@ public class PlayerActionValues extends PlayerAction{
     public double immediateValue;
     public double heuristicValue;
     public int dead; // 1 if Player will die
+    public GameObject target;
     private static final double immediateValueRate = 0.7;
     private static final double heuristicValueRate = 0.3;
     private static final double SUPERFOOD_CONSTANT = 3;
 
-    public PlayerActionValues(PlayerAction playerAction, PlayerActions playerActions, int newHeading) {
+
+    public PlayerActionValues(GameObject bot, PlayerAction playerAction, PlayerActions playerActions, int newHeading) {
         immediateValue = 0;
         heuristicValue = 0;
         dead = 0;
-        playerId = playerAction.getPlayerId();
+        playerId = bot.getId();
         action = playerActions;
         heading = newHeading;
     }
@@ -31,7 +33,13 @@ public class PlayerActionValues extends PlayerAction{
                 (heuristicValue * heuristicValueRate);
     }
 
+    public GameObject getTarget() {
+        return target;
+    }
 
+    public void setTarget(GameObject target) {
+        this.target = target;
+    }
 
     public void addImmediateValue(double addedValue) {
         this.immediateValue += addedValue;
@@ -53,7 +61,11 @@ public class PlayerActionValues extends PlayerAction{
                 bot.currentHeading,
                 pos,
                 bot.getGameObjectType(),
-                bot.getEffects());
+                bot.getEffects(),
+                bot.getTorpedoSalvoCount(),
+                bot.getSupernovaAvailable(),
+                bot.getTeleporterCount(),
+                bot.getShieldCount());
 
         // Check other player
         for (var player : otherPlayerList) {
@@ -114,7 +126,11 @@ public class PlayerActionValues extends PlayerAction{
                 bot.currentHeading,
                 pos,
                 bot.getGameObjectType(),
-                bot.getEffects());
+                bot.getEffects(),
+                bot.getTorpedoSalvoCount(),
+                bot.getSupernovaAvailable(),
+                bot.getTeleporterCount(),
+                bot.getShieldCount());
 
         addHeuristicValue(1000 / (Math.pow(PlayerActionValuesList.getDistanceBetween(
                 TempBot.getPosition(), gameState.getWorld().getCenterPoint()), 3) + 1.0));
@@ -156,6 +172,13 @@ public class PlayerActionValues extends PlayerAction{
         addHeuristicValue(Math.min(
                 -PlayerActionValuesList.getDistanceBetween(pos, gameState.getWorld().getCenterPoint())
                 - TempBot.getSize() + gameState.getWorld().getRadius(), 0));
+    }
+
+    public void addTorpedoValue(GameObject bot) {
+        if(bot.getSize() <= 10) setToDead();
+        addHeuristicValue(target.getSize() /
+                Math.pow(PlayerActionValuesList.getDistanceBetween(target, bot), 0.4)
+                * Math.pow(bot.getTorpedoSalvoCount(), 3) / 125);
     }
 
     public String toString() {

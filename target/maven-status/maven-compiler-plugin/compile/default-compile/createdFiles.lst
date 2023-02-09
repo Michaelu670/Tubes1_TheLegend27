@@ -1,1 +1,5 @@
 Enums\Effects.class
+Enums\ObjectTypes.class
+Models\PlayerAction.class
+Models\GameState.class
+Models\GameStateDto.class
