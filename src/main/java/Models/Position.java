@@ -30,4 +30,12 @@ public class Position {
   public void setY(int y) {
     this.y = y;
   }
+
+  public void generateRandomPosition(GameState gameState){
+    Position center = gameState.getWorld().getCenterPoint();
+    double r = gameState.getWorld().getRadius() * Math.sqrt(Math.random());
+    double theta = Math.random() * 2 * Math.PI;
+    setX((int)(center.getX() + r * Math.cos(theta)));
+    setY((int)(center.getY() + r * Math.sin(theta)));
+  }
 }

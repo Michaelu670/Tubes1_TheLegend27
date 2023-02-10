@@ -15,6 +15,7 @@ public class GameObject {
   public Integer supernovaAvailable;
   public Integer teleporterCount;
   public Integer shieldCount;
+  public boolean teleporterInfo;
 
 
   public EnumSet<Effects> getEffects() {
@@ -38,6 +39,7 @@ public class GameObject {
     this.supernovaAvailable = supernovaAvailable;
     this.teleporterCount = teleporterCount;
     this.shieldCount = shieldCount;
+    this.teleporterInfo = false;
   }
 
   public UUID getId() {
@@ -110,6 +112,14 @@ public class GameObject {
 
   public void setShieldCount(Integer shieldCount) {
     this.shieldCount = shieldCount;
+  }
+
+  public boolean getTeleporterInfo() {
+    return teleporterInfo;
+  }
+
+  public void setTeleporterInfo(boolean teleporterInfo) {
+    this.teleporterInfo = teleporterInfo;
   }
 
   public static GameObject FromStateList(UUID id, List<Integer> stateList)
