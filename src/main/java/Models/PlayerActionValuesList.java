@@ -35,7 +35,7 @@ public class PlayerActionValuesList{
     }
 
     private void fill(PlayerAction playerAction, GameState gameState, GameObject bot) {
-
+        
         for (var currentPlayerAction : actionsWithDirection) {
             for (int heading = 0; heading < 360; heading++) {
                 values.add(new PlayerActionValues(bot, playerAction, currentPlayerAction, heading));
@@ -52,10 +52,17 @@ public class PlayerActionValuesList{
             values.add(new PlayerActionValues(bot, playerAction, PlayerActions.FIRETORPEDOES, getHeadingBetween(bot, player)));
             values.get(values.size() - 1).setTarget(player);
         }
-        if(bot.getTeleporterCount() != 0 && bot.getSize() > 40){
+        if(bot.getTeleporterCount() != 0 && bot.getSize() > 45 && bot.getTeleporterInfo() == false){
             for (var player : otherPlayerList) {
                 values.add(new PlayerActionValues(bot, playerAction, PlayerActions.FIRETELEPORT, getHeadingBetween(bot, player)));
                 values.get(values.size() - 1).setTarget(player);
+            }
+            for(int i = 0; i < 100; i++){
+                Position randPos = new Position();
+                randPos.generateRandomPosition(gameState);
+                GameObject target = new GameObject(null, null, null, null, randPos, null, null, null, null, null, null);
+                values.add(new PlayerActionValues(bot, playerAction, PlayerActions.FIRETELEPORT, getHeadingBetween(bot, target)));
+                values.get(values.size() - 1).setTarget(target);
             }
         }
     }
