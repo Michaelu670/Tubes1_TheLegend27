@@ -71,6 +71,12 @@ public class BotService {
 
         this.playerAction = valuesList.bestAction();
         playerAction = this.playerAction;
+
+        // Update bot.teleporterInfo if current action "FIRETELEPORT"
+        if(playerAction.getAction() == PlayerActions.FIRETELEPORT){
+            bot.setTeleporterInfo(true);
+        }
+
         System.out.println("Size : " + bot.getSize());
         System.out.println("Pos : " + bot.getPosition().getX() + " " + bot.getPosition().getY());
         System.out.println("Effects : " + bot.getEffects().toString());
