@@ -28,13 +28,13 @@ public class PlayerActionValuesList{
         values = new ArrayList<>();
     }
 
-    public PlayerActionValuesList(PlayerAction playerAction, GameState gameState, GameObject bot) {
+    public PlayerActionValuesList(PlayerAction playerAction, GameState gameState, GameObject bot, boolean isTeleporterActive) {
         values = new ArrayList<>();
-        fill(playerAction, gameState, bot);
+        fill(playerAction, gameState, bot, isTeleporterActive);
         compute(gameState, bot);
     }
 
-    private void fill(PlayerAction playerAction, GameState gameState, GameObject bot) {
+    private void fill(PlayerAction playerAction, GameState gameState, GameObject bot, boolean isTeleporterActive) {
         
         for (var currentPlayerAction : actionsWithDirection) {
             for (int heading = 0; heading < 360; heading++) {
@@ -52,7 +52,7 @@ public class PlayerActionValuesList{
             values.add(new PlayerActionValues(bot, playerAction, PlayerActions.FIRETORPEDOES, getHeadingBetween(bot, player)));
             values.get(values.size() - 1).setTarget(player);
         }
-        if(bot.getTeleporterCount() != 0 && bot.getSize() > 45 && bot.getTeleporterInfo() == false){
+        if(bot.getTeleporterCount() != 0 && bot.getSize() > 45 && !isTeleporterActive){
             for (var player : otherPlayerList) {
                 values.add(new PlayerActionValues(bot, playerAction, PlayerActions.FIRETELEPORT, getHeadingBetween(bot, player)));
                 values.get(values.size() - 1).setTarget(player);
@@ -63,6 +63,14 @@ public class PlayerActionValuesList{
                 GameObject target = new GameObject(null, null, null, null, randPos, null, null, null, null, null, null);
                 values.add(new PlayerActionValues(bot, playerAction, PlayerActions.FIRETELEPORT, getHeadingBetween(bot, target)));
                 values.get(values.size() - 1).setTarget(target);
+            }
+        }
+        if(isTeleporterActive){
+            var teleporterList = gameState.getGameObjects().stream().filter(item -> item.getGameObjectType() == ObjectTypes.TELEPORTER).collect(Collectors.toList());
+            for(var teleporter : teleporterList){
+                System.out.println("Teleporter ID: " + teleporter.getId());
+                System.out.println("Teleporter speed: " + teleporter.getSpeed());
+                System.out.println("Teleporter position: (" + teleporter.getPosition().getX() + ", " + teleporter.getPosition().getY() + ")");
             }
         }
     }
@@ -119,6 +127,7 @@ public class PlayerActionValuesList{
                 case FIRETELEPORT:
                     pos.setX(playerAction.target.getPosition().getX());
                     pos.setY(playerAction.target.getPosition().getY());
+                    // playerAction.addTeleporterValue();
                     break;
                 case TELEPORT:
                     playerAction.setToDead();
