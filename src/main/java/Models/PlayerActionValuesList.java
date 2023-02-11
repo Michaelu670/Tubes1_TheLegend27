@@ -20,7 +20,7 @@ public class PlayerActionValuesList{
             PlayerActions.STARTAFTERBURNER,
             PlayerActions.STOPAFTERBURNER,
             PlayerActions.DETONATESUPERNOVA,
-            PlayerActions.TELEPORT,
+            // PlayerActions.TELEPORT,
             PlayerActions.ACTIVATESHIELD
     };
 
@@ -28,13 +28,13 @@ public class PlayerActionValuesList{
         values = new ArrayList<>();
     }
 
-    public PlayerActionValuesList(PlayerAction playerAction, GameState gameState, GameObject bot, boolean isTeleporterActive) {
+    public PlayerActionValuesList(PlayerAction playerAction, GameState gameState, GameObject bot, Teleporter myTeleporter) {
         values = new ArrayList<>();
-        fill(playerAction, gameState, bot, isTeleporterActive);
+        fill(playerAction, gameState, bot, myTeleporter);
         compute(gameState, bot);
     }
 
-    private void fill(PlayerAction playerAction, GameState gameState, GameObject bot, boolean isTeleporterActive) {
+    private void fill(PlayerAction playerAction, GameState gameState, GameObject bot, Teleporter myTeleporter) {
         
         for (var currentPlayerAction : actionsWithDirection) {
             for (int heading = 0; heading < 360; heading++) {
@@ -52,10 +52,12 @@ public class PlayerActionValuesList{
             values.add(new PlayerActionValues(bot, playerAction, PlayerActions.FIRETORPEDOES, getHeadingBetween(bot, player)));
             values.get(values.size() - 1).setTarget(player);
         }
-        if(bot.getTeleporterCount() != 0 && bot.getSize() > 45 && !isTeleporterActive){
+        if(bot.getTeleporterCount() != 0 && bot.getSize() > 45 && myTeleporter.isTeleporterActive() == false){
             for (var player : otherPlayerList) {
-                values.add(new PlayerActionValues(bot, playerAction, PlayerActions.FIRETELEPORT, getHeadingBetween(bot, player)));
-                values.get(values.size() - 1).setTarget(player);
+                if(bot.getSize() - 20 > player.getSize()){
+                    values.add(new PlayerActionValues(bot, playerAction, PlayerActions.FIRETELEPORT, getHeadingBetween(bot, player)));
+                    values.get(values.size() - 1).setTarget(player);
+                }
             }
             for(int i = 0; i < 100; i++){
                 Position randPos = new Position();
@@ -65,12 +67,36 @@ public class PlayerActionValuesList{
                 values.get(values.size() - 1).setTarget(target);
             }
         }
-        if(isTeleporterActive){
+
+        if(myTeleporter.isTeleporterActive()){
             var teleporterList = gameState.getGameObjects().stream().filter(item -> item.getGameObjectType() == ObjectTypes.TELEPORTER).collect(Collectors.toList());
+            if(myTeleporter.getId() == null){
+                for(var teleporter : teleporterList){
+                    if(teleporter.currentHeading == myTeleporter.getHeading()){
+                        myTeleporter.setId(teleporter.getId());
+                    }
+                }
+            }
+            // System.out.println("Teleporter ID: " + myTeleporter.getId());
+            boolean found = false;
             for(var teleporter : teleporterList){
-                System.out.println("Teleporter ID: " + teleporter.getId());
-                System.out.println("Teleporter speed: " + teleporter.getSpeed());
-                System.out.println("Teleporter position: (" + teleporter.getPosition().getX() + ", " + teleporter.getPosition().getY() + ")");
+                if(teleporter.getId().equals(myTeleporter.getId())){
+                   found = true;
+                    double dist = Math.sqrt(Math.pow(teleporter.getPosition().getX() - myTeleporter.getTargetPosition().getX(), 2) + Math.pow(teleporter.getPosition().getY() - myTeleporter.getTargetPosition().getY(), 2));
+                    if(dist <= 10){
+                        System.out.println("Teleporter target position: (" + myTeleporter.getTargetPosition().getX() + ", " + myTeleporter.getTargetPosition().getY() + ")");
+                        System.out.println("Teleporter position: (" + teleporter.getPosition().getX() + ", " + teleporter.getPosition().getY() + ")");
+                        GameObject target = new GameObject(null, null, null, null, teleporter.getPosition(), null, null, null, null, null, null);
+                        values.add(new PlayerActionValues(bot, playerAction, PlayerActions.TELEPORT, 0));
+                        values.get(values.size() - 1).setTarget(target);
+                    }
+                }
+            }
+            if(!found) {
+                myTeleporter.cntNotFound++;
+            }
+            if(myTeleporter.cntNotFound == 3) {
+                myTeleporter.reset();
             }
         }
     }
@@ -130,7 +156,8 @@ public class PlayerActionValuesList{
                     // playerAction.addTeleporterValue();
                     break;
                 case TELEPORT:
-                    playerAction.setToDead();
+                    pos.setX(playerAction.getTarget().getPosition().getX());
+                    pos.setY(playerAction.getTarget().getPosition().getY());
                     break;
                 case ACTIVATESHIELD:
                     playerAction.addShieldValue(bot, torpedoList);
@@ -149,7 +176,7 @@ public class PlayerActionValuesList{
         }
     }
 
-    public PlayerAction bestAction() {
+    public PlayerActionValues bestAction() {
         assert (!values.isEmpty());
         values.sort(Comparator.comparingDouble(PlayerActionValues::getValue));
         System.out.println(values.get(values.size()-1).toString());
