@@ -17,14 +17,14 @@ public class BotService {
     private GameState gameState;
     private Integer currentTick;
     private Integer prevRadius;
-    private boolean isTeleporterActive;
+    private Teleporter teleporter;
 
     public BotService() {
         this.playerAction = new PlayerAction();
         this.gameState = new GameState();
         currentTick = -1;
         prevRadius = -1;
-        isTeleporterActive = false;
+        this.teleporter = new Teleporter();
     }
 
 
@@ -63,7 +63,7 @@ public class BotService {
         Timestamp start_time = new Timestamp(System.currentTimeMillis());
 
         // Compute action
-        PlayerActionValuesList valuesList = new PlayerActionValuesList(playerAction, gameState, bot, isTeleporterActive);
+        PlayerActionValuesList valuesList = new PlayerActionValuesList(playerAction, gameState, bot, teleporter);
 
 
         // Time end
@@ -76,7 +76,14 @@ public class BotService {
 
         // Set isTeleporterActive = true, if current action "FIRETELEPORT"
         if(playerAction.getAction() == PlayerActions.FIRETELEPORT){
-            isTeleporterActive = true;
+            teleporter.setTeleporterActive(true);
+            teleporter.setHeading(playerAction.getHeading());
+            teleporter.setTargetPosition(valuesList.bestAction().target.getPosition());
+        }
+
+        // Reset teleporter, if current action "TELEPORT"
+        if(playerAction.getAction() == PlayerActions.TELEPORT){
+            teleporter.reset();
         }
 
         System.out.println("Size : " + bot.getSize());
