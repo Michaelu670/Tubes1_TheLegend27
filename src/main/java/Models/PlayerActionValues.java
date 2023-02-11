@@ -180,7 +180,7 @@ public class PlayerActionValues extends PlayerAction{
         }
         else {
             addHeuristicValue(target.getSize() /
-                    Math.pow(PlayerActionValuesList.getDistanceBetween(target, bot), 2.5)  // TODO Bot distance
+                    Math.pow(PlayerActionValuesList.getDistanceBetween(target, bot), 2)  // TODO Bot distance
                     * Math.pow((bot.getTorpedoSalvoCount()), 3) * (target.getSize()/bot.getSize()) * gameState.getWorld().getCurrentTick() / 62500);
         }
     }
