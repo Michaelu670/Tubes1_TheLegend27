@@ -81,8 +81,9 @@ public class PlayerActionValuesList{
             boolean found = false;
             for(var teleporter : teleporterList){
                 if(teleporter.getId().equals(myTeleporter.getId())){
-                   found = true;
-                    double dist = Math.sqrt(Math.pow(teleporter.getPosition().getX() - myTeleporter.getTargetPosition().getX(), 2) + Math.pow(teleporter.getPosition().getY() - myTeleporter.getTargetPosition().getY(), 2));
+                    found = true;
+                    double dist = getDistanceBetween(teleporter.getPosition(), myTeleporter.getTargetPosition());
+                    System.out.println("Distance teleporter to target: " + dist);
                     if(dist <= 10){
                         System.out.println("Teleporter target position: (" + myTeleporter.getTargetPosition().getX() + ", " + myTeleporter.getTargetPosition().getY() + ")");
                         System.out.println("Teleporter position: (" + teleporter.getPosition().getX() + ", " + teleporter.getPosition().getY() + ")");
@@ -90,12 +91,30 @@ public class PlayerActionValuesList{
                         values.add(new PlayerActionValues(bot, playerAction, PlayerActions.TELEPORT, 0));
                         values.get(values.size() - 1).setTarget(target);
                     }
+                    else{
+                        double distBotToTeleporter = getDistanceBetween(bot.getPosition(), teleporter.getPosition());
+                        double distBotToTarget = getDistanceBetween(bot.getPosition(), myTeleporter.getTargetPosition());
+                        
+                        if(distBotToTeleporter > distBotToTarget){
+                            // Teleporter telah melewati target
+                            System.out.println("Teleporter target position (kelewatan): (" + myTeleporter.getTargetPosition().getX() + ", " + myTeleporter.getTargetPosition().getY() + ")");
+                            System.out.println("Teleporter position (kelewatan): (" + teleporter.getPosition().getX() + ", " + teleporter.getPosition().getY() + ")");
+                            GameObject target = new GameObject(null, null, null, null, teleporter.getPosition(), null, null, null, null, null, null);
+                            values.add(new PlayerActionValues(bot, playerAction, PlayerActions.TELEPORT, 0));
+                            values.get(values.size() - 1).setTarget(target);
+                        }
+                        else{
+                            // Teleporter belum melewati target
+                            System.out.println("Teleporter target position (belum kelewatan): (" + myTeleporter.getTargetPosition().getX() + ", " + myTeleporter.getTargetPosition().getY() + ")");
+                            System.out.println("Teleporter position (belum kelewatan): (" + teleporter.getPosition().getX() + ", " + teleporter.getPosition().getY() + ")");
+                        }
+                    }
                 }
             }
             if(!found) {
                 myTeleporter.cntNotFound++;
             }
-            if(myTeleporter.cntNotFound == 3) {
+            if(myTeleporter.cntNotFound == 2) {
                 myTeleporter.reset();
             }
         }
@@ -153,7 +172,7 @@ public class PlayerActionValuesList{
                 case FIRETELEPORT:
                     pos.setX(playerAction.target.getPosition().getX());
                     pos.setY(playerAction.target.getPosition().getY());
-                    // playerAction.addTeleporterValue();
+                    // playerAction.addTeleporterValue(bot, gameState);
                     break;
                 case TELEPORT:
                     pos.setX(playerAction.getTarget().getPosition().getX());
