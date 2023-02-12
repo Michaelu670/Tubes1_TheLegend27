@@ -8,6 +8,7 @@ public class Teleporter {
     private int heading;
     private Position targetPos;
     public int cntNotFound;
+    public int cntOutput;
 
     public Teleporter(){
         id = null;
@@ -15,6 +16,7 @@ public class Teleporter {
         heading = -1;
         targetPos = new Position();
         cntNotFound = 0;
+        cntOutput = 0;
     }
 
     public void setTeleporterActive(boolean value){
@@ -55,5 +57,6 @@ public class Teleporter {
         heading = -1;
         targetPos = new Position();
         cntNotFound = 0;
+        cntOutput = 0;
     }
 }

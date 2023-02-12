@@ -81,8 +81,12 @@ public class BotService {
             teleporter.setTargetPosition(valuesList.bestAction().target.getPosition());
         }
 
-        // Reset teleporter, if current action "TELEPORT"
+        // Keluarin action "TELEPORT" 2x in case tidak keteleport yg awal
         if(playerAction.getAction() == PlayerActions.TELEPORT){
+            teleporter.cntOutput++;
+        }
+        // Reset teleporter, if current action "TELEPORT"
+        if(teleporter.cntOutput == 2){
             teleporter.reset();
         }
 
