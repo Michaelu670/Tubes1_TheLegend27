@@ -52,7 +52,7 @@ public class PlayerActionValuesList{
             values.add(new PlayerActionValues(bot, playerAction, PlayerActions.FIRETORPEDOES, getHeadingBetween(bot, player)));
             values.get(values.size() - 1).setTarget(player);
         }
-        if(bot.getTeleporterCount() != 0 && bot.getSize() > 45 && myTeleporter.isTeleporterActive() == false){
+        if(bot.getTeleporterCount() > 0 && bot.getSize() > 45 && myTeleporter.isTeleporterActive() == false){
             for (var player : otherPlayerList) {
                 if(bot.getSize() - 20 > player.getSize()){
                     values.add(new PlayerActionValues(bot, playerAction, PlayerActions.FIRETELEPORT, getHeadingBetween(bot, player)));
@@ -107,6 +107,48 @@ public class PlayerActionValuesList{
                             // Teleporter belum melewati target
                             System.out.println("Teleporter target position (belum kelewatan): (" + myTeleporter.getTargetPosition().getX() + ", " + myTeleporter.getTargetPosition().getY() + ")");
                             System.out.println("Teleporter position (belum kelewatan): (" + teleporter.getPosition().getX() + ", " + teleporter.getPosition().getY() + ")");
+
+                            // PlayerActionValues valuesRealTarget = new PlayerActionValues(bot, playerAction, PlayerActions.TELEPORT, 0);
+                            // PlayerActionValues valuesCurrentTarget = new PlayerActionValues(bot, playerAction, PlayerActions.TELEPORT, 0);
+
+                            // var foodList = gameState.getGameObjects()
+                            //         .stream().filter(item -> item.getGameObjectType() == ObjectTypes.FOOD)
+                            //         .collect(Collectors.toList());
+                            // var superfoodList = gameState.getGameObjects()
+                            //         .stream().filter(item -> item.getGameObjectType() == ObjectTypes.SUPERFOOD)
+                            //         .collect(Collectors.toList());
+                            // var poisongasList = gameState.getGameObjects()
+                            //         .stream().filter(item -> item.getGameObjectType() == ObjectTypes.GASCLOUD)
+                            //         .collect(Collectors.toList());
+                            // var torpedoList = gameState.getGameObjects()
+                            //         .stream().filter(item -> item.getGameObjectType() == ObjectTypes.TORPEDOSALVO)
+                            //         .collect(Collectors.toList());
+                            
+                            // valuesRealTarget.computePositionImmediateGain(myTeleporter.getTargetPosition(), gameState, bot,
+                            //         otherPlayerList, foodList, superfoodList, poisongasList, torpedoList);
+                            // valuesRealTarget.computePositionHeuristicValue(myTeleporter.getTargetPosition(), gameState, bot,
+                            //         otherPlayerList, foodList, superfoodList, poisongasList);
+
+                            // valuesCurrentTarget.computePositionImmediateGain(teleporter.getPosition(), gameState, bot,
+                            //         otherPlayerList, foodList, superfoodList, poisongasList, torpedoList);
+                            // valuesCurrentTarget.computePositionHeuristicValue(teleporter.getPosition(), gameState, bot,
+                            //         otherPlayerList, foodList, superfoodList, poisongasList);
+
+                            // if(valuesCurrentTarget.getValue() > valuesRealTarget.getValue()){
+                            //     System.out.println("Values real target: " + valuesRealTarget.getValue());
+                            //     System.out.println("Values current target: " + valuesCurrentTarget.getValue());
+                            //     GameObject target = new GameObject(null, null, null, null, teleporter.getPosition(), null, null, null, null, null, null);
+                            //     values.add(new PlayerActionValues(bot, playerAction, PlayerActions.TELEPORT, 0));
+                            //     values.get(values.size() - 1).setTarget(target);
+                            // }
+                            for(var player : otherPlayerList){
+                                if(bot.getSize() > player.getSize() && getDistanceBetween(teleporter, player) <= player.getSize() + bot.getSize()){
+                                    GameObject target = new GameObject(null, null, null, null, teleporter.getPosition(), null, null, null, null, null, null);
+                                    values.add(new PlayerActionValues(bot, playerAction, PlayerActions.TELEPORT, 0));
+                                    values.get(values.size() - 1).setTarget(target);
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
