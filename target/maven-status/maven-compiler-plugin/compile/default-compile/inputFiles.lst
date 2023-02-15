@@ -1,29 +1,14 @@
-<<<<<<< HEAD
-C:\Users\Johann\Documents\Code\Kuliah\3\STIMA\Tubes 1\Tubes1_TheLegend27\src\main\java\Models\Position.java
-C:\Users\Johann\Documents\Code\Kuliah\3\STIMA\Tubes 1\Tubes1_TheLegend27\src\main\java\Enums\PlayerActions.java
-C:\Users\Johann\Documents\Code\Kuliah\3\STIMA\Tubes 1\Tubes1_TheLegend27\src\main\java\Models\World.java
-C:\Users\Johann\Documents\Code\Kuliah\3\STIMA\Tubes 1\Tubes1_TheLegend27\src\main\java\Enums\Effects.java
-C:\Users\Johann\Documents\Code\Kuliah\3\STIMA\Tubes 1\Tubes1_TheLegend27\src\main\java\Models\PlayerAction.java
-C:\Users\Johann\Documents\Code\Kuliah\3\STIMA\Tubes 1\Tubes1_TheLegend27\src\main\java\Models\PlayerActionValues.java
-C:\Users\Johann\Documents\Code\Kuliah\3\STIMA\Tubes 1\Tubes1_TheLegend27\src\main\java\Services\BotService.java
-C:\Users\Johann\Documents\Code\Kuliah\3\STIMA\Tubes 1\Tubes1_TheLegend27\src\main\java\Models\GameState.java
-C:\Users\Johann\Documents\Code\Kuliah\3\STIMA\Tubes 1\Tubes1_TheLegend27\src\main\java\Models\GameStateDto.java
-C:\Users\Johann\Documents\Code\Kuliah\3\STIMA\Tubes 1\Tubes1_TheLegend27\src\main\java\Enums\ObjectTypes.java
-C:\Users\Johann\Documents\Code\Kuliah\3\STIMA\Tubes 1\Tubes1_TheLegend27\src\main\java\Main.java
-C:\Users\Johann\Documents\Code\Kuliah\3\STIMA\Tubes 1\Tubes1_TheLegend27\src\main\java\Models\PlayerActionValuesList.java
-C:\Users\Johann\Documents\Code\Kuliah\3\STIMA\Tubes 1\Tubes1_TheLegend27\src\main\java\Models\GameObject.java
-=======
-G:\My Drive\STEI ITB\Semester 4\Stima\Tubes1_TheLegend27\src\main\java\Enums\ObjectTypes.java
-G:\My Drive\STEI ITB\Semester 4\Stima\Tubes1_TheLegend27\src\main\java\Enums\Effects.java
-G:\My Drive\STEI ITB\Semester 4\Stima\Tubes1_TheLegend27\src\main\java\Enums\PlayerActions.java
-G:\My Drive\STEI ITB\Semester 4\Stima\Tubes1_TheLegend27\src\main\java\Models\GameState.java
-G:\My Drive\STEI ITB\Semester 4\Stima\Tubes1_TheLegend27\src\main\java\Models\PlayerActionValues.java
-G:\My Drive\STEI ITB\Semester 4\Stima\Tubes1_TheLegend27\src\main\java\Main.java
-G:\My Drive\STEI ITB\Semester 4\Stima\Tubes1_TheLegend27\src\main\java\Models\PlayerAction.java
-G:\My Drive\STEI ITB\Semester 4\Stima\Tubes1_TheLegend27\src\main\java\Models\PlayerActionValuesList.java
-G:\My Drive\STEI ITB\Semester 4\Stima\Tubes1_TheLegend27\src\main\java\Services\BotService.java
-G:\My Drive\STEI ITB\Semester 4\Stima\Tubes1_TheLegend27\src\main\java\Models\GameObject.java
-G:\My Drive\STEI ITB\Semester 4\Stima\Tubes1_TheLegend27\src\main\java\Models\World.java
-G:\My Drive\STEI ITB\Semester 4\Stima\Tubes1_TheLegend27\src\main\java\Models\GameStateDto.java
-G:\My Drive\STEI ITB\Semester 4\Stima\Tubes1_TheLegend27\src\main\java\Models\Position.java
->>>>>>> 19175ca6d2ac8a2c77353c9b9347accfd2bba2bb
+C:\Kuliah\Semester 4\Algorithm Strategies\Tubes 1\Tubes1_TheLegend27\src\main\java\Main.java
+C:\Kuliah\Semester 4\Algorithm Strategies\Tubes 1\Tubes1_TheLegend27\src\main\java\Enums\PlayerActions.java
+C:\Kuliah\Semester 4\Algorithm Strategies\Tubes 1\Tubes1_TheLegend27\src\main\java\Services\BotService.java
+C:\Kuliah\Semester 4\Algorithm Strategies\Tubes 1\Tubes1_TheLegend27\src\main\java\Models\PlayerAction.java
+C:\Kuliah\Semester 4\Algorithm Strategies\Tubes 1\Tubes1_TheLegend27\src\main\java\Models\PlayerActionValuesList.java
+C:\Kuliah\Semester 4\Algorithm Strategies\Tubes 1\Tubes1_TheLegend27\src\main\java\Models\Position.java
+C:\Kuliah\Semester 4\Algorithm Strategies\Tubes 1\Tubes1_TheLegend27\src\main\java\Enums\Effects.java
+C:\Kuliah\Semester 4\Algorithm Strategies\Tubes 1\Tubes1_TheLegend27\src\main\java\Models\PlayerActionValues.java
+C:\Kuliah\Semester 4\Algorithm Strategies\Tubes 1\Tubes1_TheLegend27\src\main\java\Models\GameState.java
+C:\Kuliah\Semester 4\Algorithm Strategies\Tubes 1\Tubes1_TheLegend27\src\main\java\Models\Teleporter.java
+C:\Kuliah\Semester 4\Algorithm Strategies\Tubes 1\Tubes1_TheLegend27\src\main\java\Enums\ObjectTypes.java
+C:\Kuliah\Semester 4\Algorithm Strategies\Tubes 1\Tubes1_TheLegend27\src\main\java\Models\GameObject.java
+C:\Kuliah\Semester 4\Algorithm Strategies\Tubes 1\Tubes1_TheLegend27\src\main\java\Models\World.java
+C:\Kuliah\Semester 4\Algorithm Strategies\Tubes 1\Tubes1_TheLegend27\src\main\java\Models\GameStateDto.java

@@ -59,7 +59,7 @@ public class PlayerActionValuesList{
                     values.get(values.size() - 1).setTarget(player);
                 }
             }
-            for(int i = 0; i < 100; i++){
+            for(int i = 0; i < 20; i++){
                 Position randPos = new Position();
                 randPos.generateRandomPosition(gameState);
                 GameObject target = new GameObject(null, null, null, null, randPos, null, null, null, null, null, null);
@@ -194,6 +194,7 @@ public class PlayerActionValuesList{
                             Math.sin(Math.toRadians(playerAction.getHeading())))));
                     break;
                 case STOP:
+                    playerAction.setToDead();
                     break;
                 case STARTAFTERBURNER:
                     // Unused, set to dead
@@ -214,11 +215,13 @@ public class PlayerActionValuesList{
                 case FIRETELEPORT:
                     pos.setX(playerAction.target.getPosition().getX());
                     pos.setY(playerAction.target.getPosition().getY());
+                    playerAction.addImmediateValue(-20);
                     // playerAction.addTeleporterValue(bot, gameState);
                     break;
                 case TELEPORT:
                     pos.setX(playerAction.getTarget().getPosition().getX());
                     pos.setY(playerAction.getTarget().getPosition().getY());
+                    playerAction.addHeuristicValue(-10);
                     break;
                 case ACTIVATESHIELD:
                     playerAction.addShieldValue(bot, torpedoList);
@@ -245,7 +248,11 @@ public class PlayerActionValuesList{
     }
 
     public static boolean isCollide(GameObject object1, GameObject object2) {
-        return (int) Math.round(getDistanceBetween(object1, object2)) < object1.getSize() + object2.getSize();
+        return ((int) Math.round(getDistanceBetween(object1, object2))) < object1.getSize() + object2.getSize();
+    }
+
+    public static Double getTickDistance(Position pos1, Position pos2, Integer speed) {
+        return Math.max(Math.ceil(getDistanceBetween(pos1, pos2) / speed), 1.0);
     }
 
     public static double getDistanceBetween(GameObject object1, GameObject object2) {

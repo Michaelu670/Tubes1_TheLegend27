@@ -75,12 +75,13 @@ public class PlayerActionValues extends PlayerAction{
                 setToDead();
                 return;
             }
-            if (PlayerActionValuesList.getDistanceBetween(player, TempBot) >
-                    player.getSize() + TempBot.getSize() - player.getSpeed() / 3) continue;
             if (player.getSize() > TempBot.getSize()) {
                 addImmediateValue(-player.getSize() / 2);
             }
-            else {
+            if (PlayerActionValuesList.getDistanceBetween(player, TempBot) >
+                    player.getSize() + TempBot.getSize() - player.getSpeed() / 3) continue;
+
+            if (player.getSize() + 3 < TempBot.getSize()){
                 addImmediateValue(Math.min(TempBot.getSize() / 2, player.getSize()));
             }
         }
@@ -113,6 +114,8 @@ public class PlayerActionValues extends PlayerAction{
 
         if (isGas) addImmediateValue(-1);
 
+        if (bot.getSize() + immediateValue < 5) setToDead();
+
     }
 
     public void computePositionHeuristicValue(Position pos, GameState gameState, GameObject bot,
@@ -136,27 +139,25 @@ public class PlayerActionValues extends PlayerAction{
                 TempBot.getPosition(), gameState.getWorld().getCenterPoint()), 3) + 1.0));
 
         for (var player : otherPlayerList) {
-            if (player.getSize() > bot.getSize()) {
-                addHeuristicValue(-700 * Math.min(bot.getSize(), player.getSize() / 2)/
-                        (Math.pow(PlayerActionValuesList.getDistanceBetween(pos, player.getPosition())
-                                - player.getSize() - bot.getSize(),3) + 1.0));
+            if (player.getSize() + 3 > bot.getSize()) {
+                addHeuristicValue(-Math.min(bot.getSize(), player.getSize() / 2)
+                        / Math.pow(PlayerActionValuesList.getTickDistance(pos, player.getPosition(), bot.getSpeed() + player.getSpeed()), 2)
+                );
             }
             else {
-                addHeuristicValue(400 * Math.min(bot.getSize() / 2, player.getSize())/
-                        (Math.pow(PlayerActionValuesList.getDistanceBetween(pos, player.getPosition())
-                                - player.getSize() - bot.getSize(),3) + 1.0));
+                addHeuristicValue(Math.min(bot.getSize() / 2, player.getSize())
+                        / Math.pow(PlayerActionValuesList.getTickDistance(pos, player.getPosition(), Math.max(bot.getSpeed() - player.getSpeed() / 3, 0)), 2)
+                );
             }
         }
         for (var obj : foodList) {
-            addHeuristicValue(150 * obj.getSize() /
-                    (Math.pow(PlayerActionValuesList.getDistanceBetween(
-                            pos, obj.getPosition()),3) + 1.0));
+            addHeuristicValue(obj.getSize() /
+                    Math.pow(PlayerActionValuesList.getTickDistance(pos, obj.getPosition(), bot.getSpeed()), 2));
         }
 
         for (var obj : superfoodList) {
-            addHeuristicValue(400 * obj.getSize() /
-                    (Math.pow(PlayerActionValuesList.getDistanceBetween(
-                            pos, obj.getPosition()),3) + 1.0));
+            addHeuristicValue(obj.getSize() /
+                    Math.pow(PlayerActionValuesList.getTickDistance(pos, obj.getPosition(), bot.getSpeed()), 2));
             if (PlayerActionValuesList.isCollide(TempBot, obj)) {
                 addHeuristicValue(SUPERFOOD_CONSTANT);
             }
@@ -181,7 +182,7 @@ public class PlayerActionValues extends PlayerAction{
         else {
             addHeuristicValue(target.getSize() /
                     Math.pow(PlayerActionValuesList.getDistanceBetween(target, bot), 2)  // TODO Bot distance
-                    * Math.pow((bot.getTorpedoSalvoCount()), 3) * (target.getSize()/bot.getSize()) * gameState.getWorld().getCurrentTick() / 62500);
+                    * Math.pow((bot.getTorpedoSalvoCount()), 3) * (target.getSize()/bot.getSize()) * gameState.getWorld().getCurrentTick() / 12500);
         }
     }
 
@@ -196,15 +197,20 @@ public class PlayerActionValues extends PlayerAction{
                 double distance = PlayerActionValuesList.getDistanceBetween(bot, torpedo) - bot.getSize();
                 double relativeHeading = Math.abs(PlayerActionValuesList.getHeadingBetween(torpedo, bot) - torpedo.currentHeading);
                 Double deviance = Math.toDegrees(Math.asin((bot.getSize() + torpedo.getSize()) / distance)); // use Double class to check for NaN
-                if (relativeHeading < deviance /*&& !deviance.isNaN()*/) { // check if torpedo is possible to collide
+                if (deviance.isNaN()) {
+                    System.out.println("deviance isNaN");
+                }
+                if (relativeHeading < deviance && !deviance.isNaN()) { // check if torpedo is possible to collide
                     if (relativeHeading == 0) relativeHeading = 0.001;
                     val += torpedo.getSize() * (deviance / relativeHeading) / Math.pow(distance/20, 4);
-                    flag = true;
+                    if (10 <= distance / torpedo.getSpeed() && distance / torpedo.getSpeed() <= 11) {
+                        flag = true;
+                    }
+
                 }
             }
             if(flag) {
-                val *= bot.size / 60;
-                addHeuristicValue(val);
+                addHeuristicValue(1000);
             }
             else setToDead();
         }
