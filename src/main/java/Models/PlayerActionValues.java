@@ -139,25 +139,25 @@ public class PlayerActionValues extends PlayerAction{
                 TempBot.getPosition(), gameState.getWorld().getCenterPoint()), 3) + 1.0));
 
         for (var player : otherPlayerList) {
-            if (player.getSize() + 3 > bot.getSize()) {
+            if (player.getSize() + 6 >= bot.getSize()) {
                 addHeuristicValue(-Math.min(bot.getSize(), player.getSize() / 2)
-                        / Math.pow(PlayerActionValuesList.getTickDistance(pos, player.getPosition(), bot.getSpeed() + player.getSpeed()), 2)
+                        / Math.pow(PlayerActionValuesList.getTickDistance(TempBot, player, bot.getSpeed() + player.getSpeed()), 2)
                 );
             }
             else {
                 addHeuristicValue(Math.min(bot.getSize() / 2, player.getSize())
-                        / Math.pow(PlayerActionValuesList.getTickDistance(pos, player.getPosition(), Math.max(bot.getSpeed() - player.getSpeed() / 3, 0)), 2)
+                        / Math.pow(PlayerActionValuesList.getTickDistance(TempBot, player, Math.max(bot.getSpeed() - player.getSpeed() / 3, 1)), 2)
                 );
             }
         }
         for (var obj : foodList) {
             addHeuristicValue(obj.getSize() /
-                    Math.pow(PlayerActionValuesList.getTickDistance(pos, obj.getPosition(), bot.getSpeed()), 2));
+                    Math.pow(PlayerActionValuesList.getTickDistance(TempBot, obj, bot.getSpeed()), 2));
         }
 
         for (var obj : superfoodList) {
             addHeuristicValue(obj.getSize() /
-                    Math.pow(PlayerActionValuesList.getTickDistance(pos, obj.getPosition(), bot.getSpeed()), 2));
+                    Math.pow(PlayerActionValuesList.getTickDistance(TempBot, obj, bot.getSpeed()), 2));
             if (PlayerActionValuesList.isCollide(TempBot, obj)) {
                 addHeuristicValue(SUPERFOOD_CONSTANT);
             }

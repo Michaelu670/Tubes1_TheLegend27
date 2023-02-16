@@ -213,9 +213,9 @@ public class PlayerActionValuesList{
                     playerAction.setToDead();
                     break;
                 case FIRETELEPORT:
+                    bot.setSize(bot.getSize() - 20);
                     pos.setX(playerAction.target.getPosition().getX());
                     pos.setY(playerAction.target.getPosition().getY());
-                    playerAction.addImmediateValue(-20);
                     // playerAction.addTeleporterValue(bot, gameState);
                     break;
                 case TELEPORT:
@@ -236,6 +236,13 @@ public class PlayerActionValuesList{
             playerAction.computePositionHeuristicValue(pos, gameState, bot,
                     otherPlayerList, foodList, superfoodList, poisongasList);
 
+            if (playerAction.getAction() == PlayerActions.FIRETELEPORT) {
+                playerAction.addHeuristicValue(playerAction.immediateValue);
+                playerAction.heuristicValue /= 1.5;
+                playerAction.immediateValue = -20;
+                bot.setSize(bot.getSize() + 20);
+            }
+
 
         }
     }
@@ -251,8 +258,10 @@ public class PlayerActionValuesList{
         return ((int) Math.round(getDistanceBetween(object1, object2))) < object1.getSize() + object2.getSize();
     }
 
-    public static Double getTickDistance(Position pos1, Position pos2, Integer speed) {
-        return Math.max(Math.ceil(getDistanceBetween(pos1, pos2) / speed), 1.0);
+    public static Double getTickDistance(GameObject obj1, GameObject obj2, Integer speed) {
+        if(speed == 0) return Double.MAX_VALUE;
+        return Math.max(Math.ceil((getDistanceBetween(obj1, obj2) -
+                obj1.getSize() - obj2.getSize()) / speed), 1.0);
     }
 
     public static double getDistanceBetween(GameObject object1, GameObject object2) {
