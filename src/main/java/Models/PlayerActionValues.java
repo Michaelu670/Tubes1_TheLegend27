@@ -1,6 +1,7 @@
 package Models;
 
 import Enums.Effects;
+import Enums.ObjectTypes;
 import Enums.PlayerActions;
 
 import java.util.Comparator;
@@ -140,7 +141,7 @@ public class PlayerActionValues extends PlayerAction{
 
         for (var player : otherPlayerList) {
             if (player.getSize() + 6 >= bot.getSize()) {
-                addHeuristicValue(-Math.min(bot.getSize(), player.getSize() / 2)
+                addHeuristicValue(-4 * Math.min(bot.getSize(), player.getSize() / 2)
                         / Math.pow(PlayerActionValuesList.getTickDistance(TempBot, player, bot.getSpeed() + player.getSpeed()), 2)
                 );
             }
@@ -176,13 +177,37 @@ public class PlayerActionValues extends PlayerAction{
     }
 
     public void addTorpedoValue(GameObject bot, GameState gameState) {
-        if(target.getEffects().contains(Effects.SHIELD) || bot.getSize() <= 25) {
+        if(target.getEffects().contains(Effects.SHIELD) || bot.getSize() <= 25 || bot.getTorpedoSalvoCount() == 0) {
             setToDead();
         }
         else {
-            addHeuristicValue(target.getSize() /
-                    Math.pow(PlayerActionValuesList.getDistanceBetween(target, bot), 2)  // TODO Bot distance
-                    * Math.pow((bot.getTorpedoSalvoCount()), 3) * (target.getSize()/bot.getSize()) * gameState.getWorld().getCurrentTick() / 12500);
+            /* Will hit if cos(cumulative player move degree) < maxcos
+            *  Means : if maxcos >= 1 || maxcos < 0, guaranteed to hit
+            *          else chance = 1 - arccos(maxcos) / PI */
+            Double maxcos =  (target.getSize() + 10) * 20 / (target.getSpeed()) / (
+                    PlayerActionValuesList.getDistanceBetween(target, bot)
+                    - bot.getSize() - 20 - target.getSize()
+            );
+            Double p = maxcos >= 0 && maxcos <= 1 ?
+                    1 - Math.acos(maxcos) / Math.PI:
+                    1.0;
+
+            Double areaLintasan = 20 * (PlayerActionValuesList.getDistanceBetween(target, bot)
+                    - bot.getSize() - target.getSize());
+            Double totalArea = Math.PI * gameState.getWorld().getRadius() * gameState.getWorld().getRadius();
+            var objectInArea = gameState.getGameObjects()
+                    .stream().filter(item -> PlayerActionValuesList.getDistanceBetween(
+                            gameState.getWorld().getCenterPoint(), item.getPosition()) < gameState.getWorld().getRadius())
+                    .collect(Collectors.toList());
+            Double totalObjectInArea = Double.valueOf(objectInArea.size());
+
+            Double predictedObjectInArea = totalObjectInArea * areaLintasan / totalArea;
+
+            System.out.println("chance : " + p + ", predict obj : " + predictedObjectInArea);
+            addHeuristicValue(
+                    20 * p * Math.max(0, 1 - predictedObjectInArea / 4)
+            );
+            addImmediateValue(-5);
         }
     }
 
@@ -191,19 +216,20 @@ public class PlayerActionValues extends PlayerAction{
             setToDead();
         }
         else {
-            double val = 0;
             boolean flag = false; // flag incoming torpedo, true if torpedo inbound
             for (var torpedo : torpedoList) {
-                double distance = PlayerActionValuesList.getDistanceBetween(bot, torpedo) - bot.getSize();
+                System.out.println("Torpedo speed : " + torpedo.getSpeed());
+                double distance = PlayerActionValuesList.getDistanceBetween(bot, torpedo);
                 double relativeHeading = Math.abs(PlayerActionValuesList.getHeadingBetween(torpedo, bot) - torpedo.currentHeading);
-                Double deviance = Math.toDegrees(Math.asin((bot.getSize() + torpedo.getSize()) / distance)); // use Double class to check for NaN
+                Double deviance = Math.toDegrees(
+                        Math.asin((bot.getSize() + torpedo.getSize()) / distance)
+                ); // use Double class to check for NaN
                 if (deviance.isNaN()) {
                     System.out.println("deviance isNaN");
                 }
                 if (relativeHeading < deviance && !deviance.isNaN()) { // check if torpedo is possible to collide
                     if (relativeHeading == 0) relativeHeading = 0.001;
-                    val += torpedo.getSize() * (deviance / relativeHeading) / Math.pow(distance/20, 4);
-                    if (10 <= distance / torpedo.getSpeed() && distance / torpedo.getSpeed() <= 11) {
+                    if (4 <= distance / torpedo.getSpeed() && distance / torpedo.getSpeed() <= 5) {
                         flag = true;
                     }
 

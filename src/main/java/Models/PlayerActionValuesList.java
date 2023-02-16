@@ -163,6 +163,7 @@ public class PlayerActionValuesList{
     }
 
     private void compute(GameState gameState, GameObject bot) {
+        /* Precompute GameObject List to save computational power */
         var otherPlayerList = gameState.getPlayerGameObjects()
                 .stream().filter(item -> item.getId() != bot.getId())
                 .sorted(Comparator.comparing(item -> item.getSize()))
