@@ -10,7 +10,7 @@ public class Teleporter {
     public int cntNotFound;
     public int cntOutput;
 
-    public Teleporter(){
+    public Teleporter() {
         id = null;
         isTeleporterActive = false;
         heading = -1;
@@ -19,39 +19,39 @@ public class Teleporter {
         cntOutput = 0;
     }
 
-    public void setTeleporterActive(boolean value){
+    public void setTeleporterActive(boolean value) {
         this.isTeleporterActive = value;
     }
 
-    public boolean isTeleporterActive(){
+    public boolean isTeleporterActive() {
         return isTeleporterActive;
     }
 
-    public void setId(UUID id){
+    public void setId(UUID id) {
         this.id = id;
     }
 
-    public UUID getId(){
+    public UUID getId() {
         return id;
     }
 
-    public void setHeading(int heading){
+    public void setHeading(int heading) {
         this.heading = heading;
     }
 
-    public int getHeading(){
+    public int getHeading() {
         return heading;
     }
 
-    public void setTargetPosition(Position targetPos){
+    public void setTargetPosition(Position targetPos) {
         this.targetPos = targetPos;
     }
 
-    public Position getTargetPosition(){
+    public Position getTargetPosition() {
         return targetPos;
     }
 
-    public void reset(){
+    public void reset() {
         id = null;
         isTeleporterActive = false;
         heading = -1;

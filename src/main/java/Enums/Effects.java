@@ -13,7 +13,9 @@ public enum Effects {
 
     public final Integer value;
 
-    private Effects(Integer value) { this.value = value; }
+    private Effects(Integer value) {
+        this.value = value;
+    }
 
     public EnumSet<Effects> getEffects() {
         EnumSet effects = EnumSet.noneOf(Effects.class);
@@ -42,8 +44,4 @@ public enum Effects {
         }
         return val;
     }
-
-
-
 }
-
